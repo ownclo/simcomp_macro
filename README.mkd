@@ -1,0 +1,98 @@
+SimComp Macro Processor
+
+This project is a sub-project of the SimComp software toolkit.
+It is a macroprocessor for SimComp assembly language. The macroprocessor
+is a textual expander of macros defined in assembly source code file.
+It is the first component in a SimComp ASM build chain:
+
+|infile| -> Macroprocessor -> Assembler -> |binary| -> Simulator
+
+USAGE EXAMPLE:
+=============
+Given a macro definition somewhere in the file:
+
+----
+    ADD macro &a, &b, &result
+    lda &a
+    ldx &b
+    add x
+    sta &result
+    mend
+----
+
+the macro processor will expand any occurrence of "ADD fst snd res" into
+a macro definition with positional parameters substituted in appropriate
+places, for that example:
+
+----
+    lda fst
+    lds snd
+    add x
+    sta res
+----
+
+
+PROCESSING GIVEN ASSEMBLY FILE:
+===============================
+Compiled macroprocessor can be used in the following way:
+    $ macroprocessor infile.asm outfile.asm
+
+If 'outfile.asm' is omitted, 'infile.asm' is overwritten.
+
+
+IMPLEMENTATION OF A MACROPROCESSOR:
+=================================
+Macroprocessing is a two-pass procedure. Macro Definition Table (MDT)
+is generated on the first pass, Macro Expansion is performed on the second:
+
+---------------------------------------------------------------------------
+     ________           ________________         ________
+    | source |---+---->| Macro Expander |------>| output |
+    |________|   |     |________________|       |________|
+                 |            ^
+                 |            | MDT
+                 |      ______|______
+                 |     | Declaration |
+                 |---->|   Finder    |
+                       |_____________|
+    
+Fig. 1. Macroprocessor dataflow diagram.
+---------------------------------------------------------------------------
+
+
+PROJECT STRUCTURE:
+==================
+The project is organised in a following way:
+
+    * MacroExpander - ME, a component that performs output code generation
+    * DeclarationFinder - finds macro declarations and fills the MDT.
+    * DefinitionTable - key data structure for managing macro definitions.
+    * MacroDefinition - handles the definition of a particular macro and
+        provides the routines to expand itself with a list of arguments.
+    * MacroProcessor - wires the system up and provides user interface.
+
+
+THE CHOICE OF DATA STRUCTURES:
+==============================
+The most important data structure in a project is a macro definition table.
+It needs to suite for several conditions:
+    - Frequent reads.
+    - Non-frequent writes.
+    - Addressing by macro name.
+    - Storage of macro definition objects.
+    - Storage of unique elements.
+    - Unordered.
+
+Facing the requirements described, we choose `std::unordered_map<Name, MacroDefinition>`
+from STL as the one that handles all of recuirements properly. It is based on hash tables
+and so has the O(1) complexity for reading.
+
+MacroDefinition is the next data structure of importance; it is organized as follows:
+
+MacroDefinition:
+    argc:     integer  -- the number of argument needed by macro
+    argnames: [string] -- positional argument names of a macro
+    body:     string   -- the body of a macro.
+
+    string expand(argvalues: [string]) -- returns the expansion of a macro;
+        'argvalues' is a list of arguments of a macro.
