@@ -40,6 +40,14 @@ Compiled macroprocessor can be used in the following way:
 If 'outfile.asm' is omitted, 'infile.asm' is overwritten.
 
 
+FEATURES AND BOUNDARIES:
+========================
+    * Error handling is very weak for a moment.
+    * Recursive macro expansion is supported
+      (macros can call other macros inside their body).
+    * Recursive macro definitions are not supported
+      (one simply cannot declare a macro inside a macro).
+
 IMPLEMENTATION OF A MACROPROCESSOR:
 =================================
 Macroprocessing is a two-pass procedure. Macro Definition Table (MDT)
@@ -66,7 +74,7 @@ The project is organised in a following way:
 
     * MacroExpander - ME, a component that performs output code generation
     * DeclarationFinder - finds macro declarations and fills the MDT.
-    * DefinitionTable - key data structure for managing macro definitions.
+    * DefinitionsTable - key data structure for managing macro definitions.
     * MacroDefinition - handles the definition of a particular macro and
         provides the routines to expand itself with a list of arguments.
     * MacroProcessor - wires the system up and provides user interface.

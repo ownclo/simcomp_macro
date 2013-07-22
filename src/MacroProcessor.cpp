@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "MacroProcessor.h"
 
@@ -7,9 +8,19 @@ MacroProcessor::MacroProcessor(void)
 {
 }
 
-void MacroProcessor::run(
-        const std::string infile,
-        const std::string outfile)
+MacroProcessor::~MacroProcessor()
 {
-    std::cout << infile << "\n" << outfile << "\n";
+}
+
+void MacroProcessor::run(
+        std::stringstream& in_stream,
+        std::stringstream& out_stream)
+{
+    DeclarationFinder declarationFinder;
+    DefinitionTable table;
+
+    declarationFinder.findDeclarations(in_stream, table);
+
+    out_stream << "MacroProcessor is wired up!\n";
+    // std::cout << table.printTable();
 }

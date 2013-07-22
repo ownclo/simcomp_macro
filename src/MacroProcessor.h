@@ -1,18 +1,19 @@
 #ifndef MACROPROCESSOR_H
 #define MACROPROCESSOR_H
 
+#include "DeclarationFinder.h"
+#include "DefinitionTable.h"
+
 class MacroProcessor {
 private:
-    /* data */
 
 public:
     MacroProcessor();
-
-    virtual ~MacroProcessor() {}
+    virtual ~MacroProcessor();
 
     void run(
-        const std::string infile,
-        const std::string outfile);
+        std::stringstream& in_stream,
+        std::stringstream& out_stream);
 };
 
 #endif /* end of include guard: MACROPROCESSOR_H */
