@@ -23,7 +23,7 @@ PLUS u,u,=1 ; u+=1, '=1' is a literal.
 ; macros can be used _BEFORE_ they are declared
 TRANSFER in,word ; input from port to 'word'
 
-TRANSFER macro &IO_oper,&data
+TRANSFER macro &IO_oper,&data ;; TRANSFER MACRO.
     ldy &data
     &IO_oper
     sty &data
