@@ -16,10 +16,11 @@ void MacroProcessor::run(
         std::stringstream& in_stream,
         std::stringstream& out_stream)
 {
+    SourceCodeStream codeStream(in_stream);
     DeclarationFinder declarationFinder;
     DefinitionTable table;
 
-    declarationFinder.findDeclarations(in_stream, table);
+    table = declarationFinder.findDeclarations(codeStream);
 
     out_stream << "MacroProcessor is wired up!\n";
     // std::cout << table.printTable();

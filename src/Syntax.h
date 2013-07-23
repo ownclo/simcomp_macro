@@ -1,16 +1,18 @@
 #ifndef SYNTAX_H
 #define SYNTAX_H
 
-#include <string>
+#include "Common.h"
 
 namespace Syntax {
     static const char comment_sym = ';';
-    static std::string spaces(" \r\t\n");
+    static const char macro_delim = ',';
 
-    bool is_blank(const std::string& line);
+    static String spaces(" \r\t\n");
 
-    void trim_comments(std::string& line);
-    void trim_trailling_spaces(std::string& line);
+    bool is_blank(const String& line);
+
+    void trim_comments(String& line);
+    void trim_trailling_spaces(String& line);
 } // namespace Syntax
 
 #endif /* end of include guard: SYNTAX_H */

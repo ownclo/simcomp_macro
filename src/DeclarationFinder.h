@@ -5,25 +5,29 @@
 #include <string>
 #include <sstream>
 
+#include "Common.h"
+
 #include "DefinitionTable.h"
 #include "Syntax.h"
-#include "String.h"
-
-typedef std::vector<std::string> Words;
+#include "SourceCodeStream.h"
 
 class DeclarationFinder {
 public:
-
     DeclarationFinder () {}
     virtual ~DeclarationFinder () {}
 
-    void findDeclarations(
-            std::stringstream& in_stream,
-            DefinitionTable& table);
+    DefinitionTable findDeclarations(SourceCodeStream& in_stream);
 
+private:
     // for line to be a declaration, the second
     // word must be 'macro'
     bool is_declaration(const Words& line_words);
+
+    String getMacroName(const Words& line_words);
+    Words getMacroArgNames(const Words& line_words);
+    String getMacroBody(SourceCodeStream& in_stream, const int decLine);
+
+    Words getLineWords(const String& line);
 };
 
 #endif /* end of include guard: DECLARATIONFINDER_H */
