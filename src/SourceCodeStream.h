@@ -1,14 +1,12 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef SOURCE_CODE_STREAM_H
+#define SOURCE_CODE_STREAM_H
 
 #include <iostream>
 #include <sstream>
-#include <string>
-#include <vector>
-#include <algorithm>
 
 #include "Common.h"
 #include "Syntax.h"
+#include "String.h"
 
 class SourceCodeStream {
 private:
@@ -24,8 +22,4 @@ public:
     virtual ~SourceCodeStream () {}
 };
 
-std::vector<String> split(
-        const String& s,
-        const String& delim);
-
-#endif /* end of include guard: STRING_H */
+#endif /* end of include guard: SOURCE_CODE_STREAM_H */

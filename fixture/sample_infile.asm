@@ -43,7 +43,7 @@ mend
     TRANSFER in,_B
     ABS _A,_absA
     ABS _B,_absB
-    PLUS _absA,_absB,sum
+    PLUS sum,_absA,_absB
     TRANSFER out,sum
     stop
 

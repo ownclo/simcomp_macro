@@ -1,6 +1,9 @@
 #include <iostream>
+#include <algorithm> // for copy.
+#include <iterator> // for ostream_iterator.
 
 #include "MacroDefinition.h"
+#include "String.h"
 
 MacroDefinition::MacroDefinition(
         String _name,
@@ -36,4 +39,37 @@ MacroDefinition::MacroDefinition(
     name = _name;
     argnames = _argnames;
     body = _body;
+}
+
+String MacroDefinition::expand(const Words& argvalues) const
+{
+    const size_t val_size = argvalues.size();
+    const size_t names_size = argnames.size();
+
+    if (argvalues.size() != argnames.size())
+    {
+        std::cerr << "ERROR: Wrong number of arguments for a macro '";
+        std::cerr << name << "': " << val_size << " instead of " << names_size << "\n";
+        std::cerr << "------ Argument names: ";
+        copy(argnames.begin(), argnames.end(), std::ostream_iterator<String>(std::cout, " "));
+        std::cerr << "\n";
+
+        if (argvalues.size() > 0)
+        {
+            std::cerr << "------ Passed argument values: ";
+            copy(argvalues.begin(), argvalues.end(), std::ostream_iterator<String>(std::cout, " "));
+        }
+
+        exit(-1);
+    }
+
+    String result = body;
+    Words::const_iterator argvalue = argvalues.begin();
+    for (const auto &argname : argnames)
+    {
+        replaceAll(result, argname, *argvalue);
+        ++argvalue;
+    }
+
+    return result;
 }

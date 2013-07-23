@@ -21,7 +21,8 @@ public:
 
     virtual ~MacroDefinition () {}
 
-    String getName (void) const { return name; }
+    String getName(void) const { return name; }
+    String expand(const Words& argvalues) const;
 };
 
 #endif /* end of include guard: MACRODEFINITION_H */

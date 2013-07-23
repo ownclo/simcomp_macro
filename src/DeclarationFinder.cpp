@@ -3,14 +3,16 @@
 
 #include "DeclarationFinder.h"
 
-DefinitionTable DeclarationFinder::findDeclarations(SourceCodeStream& in_stream)
+DefinitionTable DeclarationFinder::findDeclarations(
+        SourceCodeStream& in_stream,
+        std::stringstream& out_stream)
 {
     DefinitionTable table;
     String line;
 
     while (in_stream.getLine(line))
     {
-        Words line_words = getLineWords(line);
+        Words line_words = Syntax::getLineWords(line);
         if (is_declaration(line_words))
         {
             int decLine = in_stream.getLineNumber();
@@ -22,6 +24,7 @@ DefinitionTable DeclarationFinder::findDeclarations(SourceCodeStream& in_stream)
             MacroDefinition macro(name, argnames, body);
             table.addMacro(macro);
         }
+        else out_stream << line << "\n";
     }
     return table;
 }
@@ -30,7 +33,15 @@ bool DeclarationFinder::is_declaration(const Words& line_words)
 {
     if (line_words.size() < 2)
         return false;
-    return line_words[1] == "macro";
+
+    if (line_words[1] == "macro") {
+        if (line_words.size() != 3) {
+            std::cerr << "ERROR: Incorrect macro declaration. Spaces after comma in parameter list?\n";
+            exit(-1);
+        }
+        return true;
+    }
+    return false;
 }
 
 String DeclarationFinder::getMacroName(const Words& line_words)
@@ -78,9 +89,4 @@ String DeclarationFinder::getMacroBody(
     }
 
     return ss.str();
-}
-
-Words DeclarationFinder::getLineWords(const String& line)
-{
-    return split(line, Syntax::spaces);
 }

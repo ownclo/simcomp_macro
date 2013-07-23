@@ -1,19 +1,15 @@
-
     lda a
     add c
     sta z
     lda u
     add =1
     sta u
-
     ldy word
     in
     sty word
-
     ldy area
     out
     sty area
-
     ldy _A
     in
     sty _A
@@ -39,5 +35,5 @@ _A  bss 1
 _B  bss 1
 _absA bss 1
 _absB bss 1
-sum   bss 1
+sum bss 1
     end

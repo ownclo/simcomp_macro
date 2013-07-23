@@ -15,7 +15,10 @@ public:
     virtual ~DefinitionTable () {}
 
     void addMacro(MacroDefinition macro);
-    MacroDefinition findMacro(const String& name);
+
+    // true if macro is found by name @param name;
+    // if so, the macro is copied to @param macro.
+    bool findMacro(const String& name, MacroDefinition& macro) const;
 };
 
 #endif /* end of include guard: DEFINITIONTABLE_H */

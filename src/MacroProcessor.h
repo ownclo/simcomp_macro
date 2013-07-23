@@ -1,8 +1,9 @@
 #ifndef MACROPROCESSOR_H
 #define MACROPROCESSOR_H
 
-#include "DeclarationFinder.h"
 #include "DefinitionTable.h"
+#include "DeclarationFinder.h"
+#include "MacroExpander.h"
 
 class MacroProcessor {
 private:

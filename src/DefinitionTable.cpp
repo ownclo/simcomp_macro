@@ -14,13 +14,14 @@ void DefinitionTable::addMacro(MacroDefinition macro)
     macros[name] = macro;
 }
 
-MacroDefinition DefinitionTable::findMacro(const String& name)
+bool DefinitionTable::findMacro(
+        const String& name,
+        MacroDefinition& macro) const
 {
-    if (macros.find(name) == macros.end())
-    {
-        std::cerr << "ERROR: '" << name << "' macro is used undefined.\n";
-        exit(-1);
+    if (macros.find(name) == macros.end()) {
+        return false;
     }
 
-    return macros[name];
+    macro = macros.at(name);
+    return true;
 }

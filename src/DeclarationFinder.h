@@ -16,7 +16,9 @@ public:
     DeclarationFinder () {}
     virtual ~DeclarationFinder () {}
 
-    DefinitionTable findDeclarations(SourceCodeStream& in_stream);
+    DefinitionTable findDeclarations(
+            SourceCodeStream& in_stream,
+            std::stringstream& out_stream);
 
 private:
     // for line to be a declaration, the second
@@ -26,8 +28,6 @@ private:
     String getMacroName(const Words& line_words);
     Words getMacroArgNames(const Words& line_words);
     String getMacroBody(SourceCodeStream& in_stream, const int decLine);
-
-    Words getLineWords(const String& line);
 };
 
 #endif /* end of include guard: DECLARATIONFINDER_H */

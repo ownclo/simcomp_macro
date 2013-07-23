@@ -30,4 +30,9 @@ void trim_trailling_spaces(String& line)
         line.erase(found+1, String::npos);
 }
 
+Words getLineWords(const String& line)
+{
+    return split(line, spaces);
+}
+
 } // end of namespace Syntax
