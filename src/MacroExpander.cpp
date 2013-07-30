@@ -1,4 +1,4 @@
-#include <algorithm> // for copy.
+#include <algorithm> // for copy and find
 #include <iterator> // for ostream_iterator.
 
 #include "MacroExpander.h"
@@ -7,6 +7,18 @@ void MacroExpander::expand(
         const DefinitionTable& table,
         SourceCodeStream& filteredSource,
         std::stringstream& expanded_stream)
+{
+    String result;
+    Words stack_trace;
+    recursively_expand(table, filteredSource, stack_trace, result);
+    expanded_stream << result;
+}
+
+void MacroExpander::recursively_expand(
+        const DefinitionTable& table,
+        SourceCodeStream& filteredSource,
+        Words& stack_trace,
+        String& result)
 {
     String line;
     String expanded_macro;
@@ -19,13 +31,23 @@ void MacroExpander::expand(
         if (isInvocation(line_words, table, macro))
         {
             argvalues = getArgValues(line_words);
+            String name = macro.getName();
+
+            assert_not_in_stack(stack_trace, name);
+
+            Words new_stack_trace = stack_trace;
+            new_stack_trace.push_back(name);
+
             expanded_macro = macro.expand(argvalues);
 
-            // XXX: Inner macros will not be expanded.
+            std::stringstream first_expanded_stream(expanded_macro);
+            SourceCodeStream first_expanded(first_expanded_stream);
+            String finally_expanded;
 
-            expanded_stream << expanded_macro << "\n";
+            recursively_expand(table, first_expanded, new_stack_trace, finally_expanded);
+            result += finally_expanded;
         }
-        else expanded_stream << line << "\n";
+        else result += line + "\n";
     }
 }
 
@@ -44,7 +66,7 @@ bool MacroExpander::isInvocation(
 Words MacroExpander::getArgValues(const Words& line_words)
 {
     if (line_words.size() < 2)
-        return {""};
+        return Words();
 
     if (line_words.size() > 2)
     {
@@ -57,4 +79,28 @@ Words MacroExpander::getArgValues(const Words& line_words)
     }
 
     return split(line_words[1], &Syntax::param_delim);
+}
+
+void MacroExpander::assert_not_in_stack(
+        const Words& stack_trace,
+        const String& name)
+{
+    if (is_in_stack(stack_trace, name))
+    {
+        std::cerr << "ERROR: Recursively defined macros used.\n";
+        std::cerr << "------ Stack trace: ";
+        copy(stack_trace.begin(), stack_trace.end(), std::ostream_iterator<String>(std::cout, " "));
+        std::cerr << "\n";
+        exit(-1);
+    }
+}
+
+bool MacroExpander::is_in_stack(
+        const Words& stack_trace,
+        const String& name)
+{
+    Words::const_iterator found;
+    found = std::find(stack_trace.begin(), stack_trace.end(), name);
+
+    return found != stack_trace.end();
 }

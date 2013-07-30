@@ -2,8 +2,8 @@
 
 set -e
 
-INFILE="fixture/sample_infile.asm"
-OUTFILE="fixture/sample_outfile.asm"
+INFILE="fixture/simple_in.asm"
+OUTFILE="fixture/simple_out.asm"
 
 ./bin/macro $INFILE $OUTFILE
 cat $OUTFILE

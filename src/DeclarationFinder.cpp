@@ -34,8 +34,10 @@ bool DeclarationFinder::is_declaration(const Words& line_words)
     if (line_words.size() < 2)
         return false;
 
-    if (line_words[1] == "macro") {
-        if (line_words.size() != 3) {
+    if (line_words[1] == "macro")
+    {
+        if (line_words.size() > 3)
+        {
             std::cerr << "ERROR: Incorrect macro declaration. Spaces after comma in parameter list?\n";
             exit(-1);
         }
@@ -51,6 +53,9 @@ String DeclarationFinder::getMacroName(const Words& line_words)
 
 Words DeclarationFinder::getMacroArgNames(const Words& line_words)
 {
+    if (line_words.size() == 2)
+        return Words();
+
     return split(line_words[2], &Syntax::macro_delim);
 }
 
