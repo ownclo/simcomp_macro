@@ -13,10 +13,10 @@ Given a macro definition somewhere in the file:
 
 ----
     ADD macro &a, &b, &result
-    lda &a
-    ldx &b
-    add x
-    sta &result
+        lda &a
+        ldx &b
+        add x
+        sta &result
     mend
 ----
 
@@ -25,10 +25,10 @@ a macro definition with positional parameters substituted in appropriate
 places, for that example:
 
 ----
-    lda fst
-    lds snd
-    add x
-    sta res
+        lda fst
+        lds snd
+        add x
+        sta res
 ----
 
 
