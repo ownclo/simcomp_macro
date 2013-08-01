@@ -2,4 +2,4 @@ FOO macro
     FOO
 mend
 
-FOO
+    FOO

@@ -18,6 +18,6 @@ SUM3 macro &a,&b,&c
     add &c
 mend
 
-FOO BAR,_b
+    FOO BAR,_b
 
     SUM3 x,y,=1

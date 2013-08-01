@@ -5,4 +5,4 @@ FOO macro
     out
 mend
 
-FOO
+    FOO

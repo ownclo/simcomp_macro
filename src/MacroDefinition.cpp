@@ -16,8 +16,9 @@ MacroDefinition::MacroDefinition(
         std::cerr << "-------- In the definition of '" << _name << "'.\n";
     }
 
-    for (auto &argname : _argnames)
+    for (Words::iterator it = _argnames.begin(); it != _argnames.end(); ++it)
     {
+        String argname = *it;
         if (argname.length() > 0 && argname[0] != '&')
         {
             std::cerr << "WARNING: Parameter name does not begin with '&'.\n";
@@ -27,8 +28,9 @@ MacroDefinition::MacroDefinition(
         }
     }
 
-    for (auto &argname : _argnames)
+    for (Words::iterator it = _argnames.begin(); it != _argnames.end(); ++it)
     {
+        String argname = *it;
         if (_body.find(argname) == String::npos)
         {
             std::cerr << "WARNING: Unused parameter '" << argname;
@@ -46,7 +48,7 @@ String MacroDefinition::expand(const Words& argvalues) const
     const size_t val_size = argvalues.size();
     const size_t names_size = argnames.size();
 
-    if (argvalues.size() != argnames.size())
+    if (val_size != names_size)
     {
         std::cerr << "ERROR: Wrong number of arguments for a macro '";
         std::cerr << name << "': " << val_size << " instead of " << names_size << "\n";
@@ -54,7 +56,7 @@ String MacroDefinition::expand(const Words& argvalues) const
         copy(argnames.begin(), argnames.end(), std::ostream_iterator<String>(std::cout, " "));
         std::cerr << "\n";
 
-        if (argvalues.size() > 0)
+        if (val_size > 0)
         {
             std::cerr << "------ Passed argument values: ";
             copy(argvalues.begin(), argvalues.end(), std::ostream_iterator<String>(std::cout, " "));
@@ -65,9 +67,11 @@ String MacroDefinition::expand(const Words& argvalues) const
 
     String result = body;
     Words::const_iterator argvalue = argvalues.begin();
-    for (const auto &argname : argnames)
+    Words::const_iterator argname = argnames.begin();
+    while (argname != argnames.end() && argvalue != argvalues.end())
     {
-        replaceAll(result, argname, *argvalue);
+        replaceAll(result, *argname, *argvalue);
+        ++argname;
         ++argvalue;
     }
 

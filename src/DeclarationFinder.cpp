@@ -69,7 +69,7 @@ String DeclarationFinder::getMacroBody(
     int i = 0;
     while(true)
     {
-        if (not in_stream.getLine(line))
+        if (!in_stream.getLine(line))
         {
             std::cerr << "ERROR: A macro definition never reached 'mend'\n";
             std::cerr << "------ Macro declared at line #" << decLine << "\n";

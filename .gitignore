@@ -1,6 +1,7 @@
-build/
-*.vim
-doc
-tags
-fixture/sample_outfile.asm
+build/*
 bin/*
+!.scaffold
+doc/*
+*_out.asm
+*.vim
+tags

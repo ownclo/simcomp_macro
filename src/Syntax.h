@@ -5,9 +5,10 @@
 #include "String.h"
 
 namespace Syntax {
-    static const char comment_sym = ';';
-    static const char macro_delim = ',';
-    static const char param_delim = ',';
+    static const char comment_sym  = ';';
+    static const char macro_delim  = ',';
+    static const char param_delim  = ',';
+    static const char line_comment = '*';
 
     static String spaces(" \r\t\n");
 

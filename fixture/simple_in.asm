@@ -1,4 +1,4 @@
-;;; THIS IS A TESTING PROGRAM FOR MACROPRPOCESSOR.
+;;; THIS IS A TESTING SAMPLE FOR MACROPRPOCESSOR.
 
 ;; Features tested by this example:
 ;;    - finding macro definitions and storing
@@ -10,18 +10,18 @@
 ;; Features that are not tested by this example:
 ;;    - Recursive MDs. Expansion can fall into infinite loop.
 ;;    - Error reporting. That sample code is correct.
-;; further testing is needed in order to cover these areas.
+;; further testing is needed in order to cover these areas. (see other fixtures).
 PLUS macro &result,&arg1,&arg2
     lda &arg1   ; store first arg in A
     add &arg2   ; add the second arg
     sta &result ; save A to the result
 mend
 
-PLUS z,a,c ; PLUS macro with z,a,c as parameters
-PLUS u,u,=1 ; u+=1, '=1' is a literal.
+    PLUS z,a,c ; PLUS macro with z,a,c as parameters
+    PLUS u,u,=1 ; u+=1, '=1' is a literal.
 
 ; macros can be used _BEFORE_ they are declared
-TRANSFER in,word ; input from port to 'word'
+    TRANSFER in,word ; input from port to 'word'
 
 TRANSFER macro &IO_oper,&data ;; TRANSFER MACRO.
     ldy &data
@@ -29,7 +29,7 @@ TRANSFER macro &IO_oper,&data ;; TRANSFER MACRO.
     sty &data
 mend
 
-TRANSFER out,area ; output to port from 'area'
+    TRANSFER out,area ; output to port from 'area'
 
 ABS macro &data,&result
     lda &data

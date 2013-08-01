@@ -1,59 +1,80 @@
 SimComp Macro Processor
+=======================
 
+
+DESCRIPTION
+-----------
 This project is a sub-project of the SimComp software toolkit.
 It is a macroprocessor for SimComp assembly language. The macroprocessor
 is a textual expander of macros defined in assembly source code file.
 It is the first component in a SimComp ASM build chain:
 
-|infile| -> Macroprocessor -> Assembler -> |binary| -> Simulator
+    |infile| -> Macroprocessor -> Assembler -> |binary| -> Simulator
 
-USAGE EXAMPLE:
-=============
+
+BUILD INSTRUCTIONS
+------------------
+The macroprocessor is shipped with 'CMakeLists.txt' file that is
+an input file for [CMake](http://www.cmake.org/) utility. It can be
+used for generating both Makefiles and VCProjects for Linux and Windows
+environments. However, for Linux (or [Cygwin](http://www.cygwin.com/))
+folks `build.sh` script will perform the building. Just type `$ ./build.sh`.
+The binary file is stored into the `bin/` directory. So, a Linux user should
+type
+
+    $ ./build.sh && ./test.sh && ./use.sh
+
+to perform complete shipping cycle.
+
+
+TESTING
+-------
+No unit tests are provided. A simple end-to-end test script is used instead.
+It is called `test.sh` and is in a project root directory. It takes all files
+matching `*_in.asm` pattern in `fixture/` directory, runs macroprocessor against
+it and `diff`s the result with corresponding `*_expect.asm` file.
+
+USAGE EXAMPLE
+-------------
 Given a macro definition somewhere in the file:
 
-----
     ADD macro &a,&b,&result
         lda &a
         ldx &b
         add x
         sta &result
     mend
-----
 
-the macro processor will expand any occurrence of "ADD fst,snd,res" into
+the macro processor will expand any occurrence of `ADD fst,snd,res` into
 a macro definition with positional parameters substituted in appropriate
-places, for that example:
+places, for the example above the result would be:
 
-----
         lda fst
         lds snd
         add x
         sta res
-----
 
 
-PROCESSING GIVEN ASSEMBLY FILE:
-===============================
+PROCESSING GIVEN ASSEMBLY FILE
+------------------------------
 Compiled macroprocessor can be used in the following way:
-    $ macroprocessor infile.asm outfile.asm
 
-If 'outfile.asm' is omitted, 'infile.asm' is overwritten.
+    $ ./bin/macro infile.asm outfile.asm
 
 
-FEATURES AND BOUNDARIES:
-========================
-    * Error handling is very weak for a moment.
-    * Recursive macro expansion is supported
-      (macros can call other macros inside their body).
-    * Recursive macro definitions are not supported
-      (one simply cannot declare a macro inside a macro).
+FEATURES AND BOUNDARIES
+-----------------------
+* Error handling is very weak for a moment.
+* Recursive macro expansion is supported
+  (macros can call other macros inside their body).
+* Recursive macro definitions are not supported
+  (one simply cannot declare a macro inside a macro).
 
-IMPLEMENTATION OF A MACROPROCESSOR:
-=================================
+IMPLEMENTATION OF A MACROPROCESSOR
+----------------------------------
 Macroprocessing is a two-pass procedure. Macro Definition Table (MDT)
 is generated on the first pass, Macro Expansion is performed on the second:
 
----------------------------------------------------------------------------
      ________           ________________         ________
     | source |---+---->| Macro Expander |------>| output |
     |________|   |     |________________|       |________|
@@ -65,42 +86,42 @@ is generated on the first pass, Macro Expansion is performed on the second:
                        |_____________|
     
 Fig. 1. Macroprocessor dataflow diagram.
----------------------------------------------------------------------------
 
 
-PROJECT STRUCTURE:
-==================
+PROJECT STRUCTURE
+-----------------
 The project is organised in a following way:
 
-    * MacroExpander - ME, a component that performs output code generation
-    * DeclarationFinder - finds macro declarations and fills the MDT.
-    * DefinitionsTable - key data structure for managing macro definitions.
-    * MacroDefinition - handles the definition of a particular macro and
-        provides the routines to expand itself with a list of arguments.
-    * MacroProcessor - wires the system up and provides user interface.
+* `MacroExpander` - ME, a component that performs output code generation
+* `DeclarationFinder` - finds macro declarations and fills the MDT.
+* `DefinitionsTable` - key data structure for managing macro definitions.
+* `MacroDefinition` - handles the definition of a particular macro and
+    provides the routines to expand itself with a list of arguments.
+* `MacroProcessor` - wires the system up and provides user interface.
 
 
-THE CHOICE OF DATA STRUCTURES:
-==============================
+THE CHOICE OF DATA STRUCTURES
+-----------------------------
 The most important data structure in a project is a macro definition table.
 It needs to suite for several conditions:
-    - Frequent reads.
-    - Non-frequent writes.
-    - Addressing by macro name.
-    - Storage of macro definition objects.
-    - Storage of unique elements.
-    - Unordered.
 
-Facing the requirements described, we choose `std::unordered_map<Name, MacroDefinition>`
-from STL as the one that handles all of recuirements properly. It is based on hash tables
-and so has the O(1) complexity for reading.
+- Frequent reads.
+- Non-frequent writes.
+- Addressing by macro name.
+- Storage of macro definition objects.
+- Storage of unique elements.
+- Unordered.
+
+Facing the requirements described, `std::unordered_map<Name, MacroDefinition>`
+from STL is chosen as the one that handles all of recuirements properly.
+It is based on hash tables, having therefore **O(1)** complexity for reading.
 
 MacroDefinition is the next data structure of importance; it is organized as follows:
 
-MacroDefinition:
-    argc:     integer  -- the number of argument needed by macro
-    argnames: [string] -- positional argument names of a macro
-    body:     string   -- the body of a macro.
+    MacroDefinition:
+        name:     string   -- name of a macro
+        argnames: [string] -- positional argument names of a macro
+        body:     string   -- the body of a macro.
 
-    string expand(argvalues: [string]) -- returns the expansion of a macro;
-        'argvalues' is a list of arguments of a macro.
+        string expand(argvalues: [string]) -- returns the expansion of a macro;
+            'argvalues' is a list of arguments of a macro.

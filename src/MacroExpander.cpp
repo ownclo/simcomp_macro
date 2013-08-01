@@ -45,7 +45,7 @@ void MacroExpander::recursively_expand(
             String finally_expanded;
 
             recursively_expand(table, first_expanded, new_stack_trace, finally_expanded);
-            result += "* " + line + "\n";
+            result += Syntax::line_comment + line + "\n";
             result += finally_expanded;
         }
         else result += line + "\n";
