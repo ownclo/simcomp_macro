@@ -12,7 +12,7 @@ USAGE EXAMPLE:
 Given a macro definition somewhere in the file:
 
 ----
-    ADD macro &a, &b, &result
+    ADD macro &a,&b,&result
         lda &a
         ldx &b
         add x
@@ -20,7 +20,7 @@ Given a macro definition somewhere in the file:
     mend
 ----
 
-the macro processor will expand any occurrence of "ADD fst snd res" into
+the macro processor will expand any occurrence of "ADD fst,snd,res" into
 a macro definition with positional parameters substituted in appropriate
 places, for that example:
 
