@@ -1,8 +1,6 @@
 SimComp Macro Processor
 =======================
-
-
-DESCRIPTION
+Description
 -----------
 This project is a sub-project of the SimComp software toolkit.
 It is a macroprocessor for SimComp assembly language. The macroprocessor
@@ -12,29 +10,7 @@ It is the first component in a SimComp ASM build chain:
     |infile| -> Macroprocessor -> Assembler -> |binary| -> Simulator
 
 
-BUILD INSTRUCTIONS
-------------------
-The macroprocessor is shipped with 'CMakeLists.txt' file that is
-an input file for [CMake](http://www.cmake.org/) utility. It can be
-used for generating both Makefiles and VCProjects for Linux and Windows
-environments. However, for Linux (or [Cygwin](http://www.cygwin.com/))
-folks `build.sh` script will perform the building. Just type `$ ./build.sh`.
-The binary file is stored into the `bin/` directory. So, a Linux user should
-type
-
-    $ ./build.sh && ./test.sh && ./use.sh
-
-to perform complete shipping cycle.
-
-
-TESTING
--------
-No unit tests are provided. A simple end-to-end test script is used instead.
-It is called `test.sh` and is in a project root directory. It takes all files
-matching `*_in.asm` pattern in `fixture/` directory, runs macroprocessor against
-it and `diff`s the result with corresponding `*_expect.asm` file.
-
-USAGE EXAMPLE
+Usage example
 -------------
 Given a macro definition somewhere in the file:
 
@@ -55,14 +31,7 @@ places, for the example above the result would be:
         sta res
 
 
-PROCESSING GIVEN ASSEMBLY FILE
-------------------------------
-Compiled macroprocessor can be used in the following way:
-
-    $ ./bin/macro infile.asm outfile.asm
-
-
-FEATURES AND BOUNDARIES
+Features and boundaries
 -----------------------
 * Error handling is very weak for a moment.
 * Recursive macro expansion is supported
@@ -70,10 +39,51 @@ FEATURES AND BOUNDARIES
 * Recursive macro definitions are not supported
   (one simply cannot declare a macro inside a macro).
 
+
+Requirements
+------------
+The macroprocessor is implemened according to **C++0x** standart
+and depends on **STL** library. The codebase was compiled and tested
+with `Linux + g++` and `Windows + VS2010`. Note that earlier versions
+of Microsoft Visual Studio may not be supported.
+
+
+Build instructions
+------------------
+The macroprocessor is shipped with `CMakeLists.txt` file that is
+an input file for [CMake](http://www.cmake.org/) utility. It can be
+used for generating both Makefiles and VCProjects for Linux and Windows
+environments. For Linux (or [Cygwin](http://www.cygwin.com/))
+folks `build.sh` script will perform the building. The binary file is
+stored into the `bin/` directory. So, a Linux user should type
+
+    $ ./build.sh && ./test.sh && ./use.sh
+
+to perform complete shipping cycle.
+
+
+Processing given assembly file
+------------------------------
+Compiled macroprocessor can be used in the following way:
+
+    $ ./bin/macro infile.asm outfile.asm
+
+
+Testing
+-------
+No unit tests are provided. A simple end-to-end test script is used instead.
+It is called `test.sh` and is in a project root directory. It takes all files
+matching `*_in.asm` pattern in `fixture/` directory, runs macroprocessor against
+it and `diff`s the result with corresponding `*_expect.asm` file.
+
+
 IMPLEMENTATION OF A MACROPROCESSOR
 ----------------------------------
 Macroprocessing is a two-pass procedure. Macro Definition Table (MDT)
-is generated on the first pass, Macro Expansion is performed on the second:
+is generated on the first pass, Macro Expansion is performed on the second.
+Furthermore, declaration finder strips macro definitions from the source
+file so they are not present during macro expansion. The dataflow diagram
+of implemented macroprocessor is listed below:
 
      ________           ________________         ________
     | source |---+---->| Macro Expander |------>| output |
@@ -88,29 +98,29 @@ is generated on the first pass, Macro Expansion is performed on the second:
 Fig. 1. Macroprocessor dataflow diagram.
 
 
-PROJECT STRUCTURE
+Project structure
 -----------------
 The project is organised in a following way:
 
 * `MacroExpander` - ME, a component that performs output code generation
 * `DeclarationFinder` - finds macro declarations and fills the MDT.
-* `DefinitionsTable` - key data structure for managing macro definitions.
+* `DefinitionTable` - key data structure for managing macro definitions.
 * `MacroDefinition` - handles the definition of a particular macro and
     provides the routines to expand itself with a list of arguments.
 * `MacroProcessor` - wires the system up and provides user interface.
 
 
-THE CHOICE OF DATA STRUCTURES
+The choice of data structures
 -----------------------------
 The most important data structure in a project is a macro definition table.
 It needs to suite for several conditions:
 
-- Frequent reads.
-- Non-frequent writes.
-- Addressing by macro name.
-- Storage of macro definition objects.
-- Storage of unique elements.
-- Unordered.
+    - Frequent reads.
+    - Non-frequent writes.
+    - Addressing by macro name.
+    - Storage of macro definition objects.
+    - Storage of unique elements.
+    - Unordered.
 
 Facing the requirements described, `std::unordered_map<Name, MacroDefinition>`
 from STL is chosen as the one that handles all of recuirements properly.
@@ -120,8 +130,8 @@ MacroDefinition is the next data structure of importance; it is organized as fol
 
     MacroDefinition:
         name:     string   -- name of a macro
-        argnames: [string] -- positional argument names of a macro
-        body:     string   -- the body of a macro.
+        argnames: [string] -- positional argument names of the macro
+        body:     string   -- the body of the macro.
 
-        string expand(argvalues: [string]) -- returns the expansion of a macro;
-            'argvalues' is a list of arguments of a macro.
+        string expand(argvalues: [string]) -- returns the expansion of the macro;
+            'argvalues' is a list of arguments of the macro.

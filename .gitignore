@@ -1,7 +1,6 @@
 build/*
 bin/*
 !.scaffold
-doc/*
 *_out.asm
 *.vim
 tags
